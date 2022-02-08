@@ -1,9 +1,5 @@
-import styles from './index.less';
+import React, { memo } from 'react';
 
-export default function IndexPage() {
-  return (
-    <div>
-      <h1 className={styles.title}>cy</h1>
-    </div>
-  );
-}
+export default memo(function index() {
+  return <div>222</div>;
+});
