@@ -4,9 +4,9 @@ import { UserOutlined } from '@ant-design/icons';
 import styles from './index.less';
 
 
-export default memo(function Login() {
+export default memo(function Login({ history } : { history : object}) {
  const [isModalVisible, setIsModalVisible] = useState(false);
-
+console.log(history);
  const handleOk = () => {
     setIsModalVisible(false);
  }
@@ -17,6 +17,10 @@ export default memo(function Login() {
 
  const handleCancel = () => {
     setIsModalVisible(false);
+ }
+
+ const loginIn = () => {
+    history.push("/portal")
  }
   return(
   <> 
@@ -29,7 +33,7 @@ export default memo(function Login() {
               <p className={styles.textLeft} >忘记密码</p>
               <p className={styles.textRight} onClick = {showModal}>注册</p>
           </div>
-          <Button type="primary" className={styles.btn}>登录</Button>
+          <Button type="primary" className={styles.btn} onClick={loginIn}>登录</Button>
           </div>
         </div>;
         <Modal title="注册账号" 
@@ -39,8 +43,12 @@ export default memo(function Login() {
         maskClosable={false}
         okText="确认"
         cancelText="取消"
+        width="400px"
         >
-        <Input placeholder="请输入用户名" className={styles.userId} />
+           <div className={styles.agisterDiv}><p>用户名</p><Input placeholder="请输入用户名" className={styles.agisterInput} /></div>
+           <div className={styles.agisterDiv}><p>密码</p><Input.Password placeholder="输入密码" className={styles.agisterInput} /></div>
+           <div className={styles.agisterDiv}><p>确认密码</p><Input.Password placeholder="再次输入密码" className={styles.agisterInput} /></div>
+        
       </Modal>
  </>
   )

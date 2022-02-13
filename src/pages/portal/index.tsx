@@ -1,9 +1,28 @@
+import { Input } from 'antd';
 import styles from './index.less';
 
-export default function IndexPage() {
+
+const { Search } = Input;
+
+
+export default function Portal() {
+
+
+  const onSearch = () => {
+    console.log("search");
+  }
   return (
-    <div>
-      <h1 className={styles.title}>cy</h1>
+    <div className={styles.mainDiv}>
+      <div className={styles.header}>
+      <Search placeholder="搜索你想要的"
+              onSearch={onSearch} 
+              enterButton
+              className={styles.searchInput} 
+      />
+      </div>
+      <div className={styles.bodyDiv}>
+
+      </div>
     </div>
   );
 }
