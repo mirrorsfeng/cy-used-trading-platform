@@ -1,12 +1,26 @@
 import React, { memo, useState } from 'react';
 import { Input, Button, Modal } from 'antd';
 import { UserOutlined } from '@ant-design/icons';
+import { loginAuth } from '@/service/loginAuth';
 import styles from './index.less';
 
+interface Props  {
+   history: { push: Function },
+}
 
-export default memo(function Login({ history } : { history : object}) {
+export default memo(function Login({ history } : Props) {
+
  const [isModalVisible, setIsModalVisible] = useState(false);
-console.log(history);
+ const [userName, setUserName] = useState('');
+ const [password, setPassword] = useState('');
+
+ const nameOnchange = (e) => {
+   setUserName(e.target.value);
+ }
+
+ const passwordOnchange = (e) => {
+    setPassword(e.target.value);
+ }
  const handleOk = () => {
     setIsModalVisible(false);
  }
@@ -19,16 +33,20 @@ console.log(history);
     setIsModalVisible(false);
  }
 
- const loginIn = () => {
-    history.push("/portal")
+ const loginIn = () => { 
+    console.log(userName);
+    console.log(password);
+    loginAuth(userName, password).then(res => {
+       localStorage.setItem('token', res.data.result.token);
+    })
  }
   return(
   <> 
   <div className={styles.bg} >
           <div className={styles.loginDiv}>
               <div className={styles.loginText}>平台登陆</div> 
-          <Input placeholder="请输入用户名" className={styles.userId} prefix={<UserOutlined />}/>
-          <Input.Password placeholder="输入密码" className={styles.userId} />
+          <Input placeholder="请输入用户名" className={styles.userId} prefix={<UserOutlined />} value={userName} onChange={nameOnchange} />
+          <Input.Password placeholder="输入密码" className={styles.userId} value={password} onChange={passwordOnchange} />
           <div className={styles.text}>
               <p className={styles.textLeft} >忘记密码</p>
               <p className={styles.textRight} onClick = {showModal}>注册</p>

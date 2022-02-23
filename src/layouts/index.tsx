@@ -1,7 +1,9 @@
 import React, { memo } from 'react';
 import Login from './login';
+import instance from '../service/request';
 function Layouts(props:{location:any, history:object, children:any}) {
-if(props.location.pathname === '/' || props.location.pathname === '/login')
+    const token = localStorage.getItem('token');
+    if(!token)
     return (
        <>
       <Login history={props.history}/>
