@@ -2,6 +2,7 @@ import { Input, Dropdown, Menu, Carousel  } from 'antd';
 
 import SIcon from '@/components/sIcon';
 import portalCategory from '@/constants/category';
+import TabShow from '@/components/tabShow';
 import styles from './index.less';
 
 
@@ -76,6 +77,9 @@ export default function Portal() {
           }
         </div>
         </div>
+        </div>
+        <div className={styles.imgContent}>
+        <TabShow name="电子科技类" />
         </div>
         </div>
       </div>

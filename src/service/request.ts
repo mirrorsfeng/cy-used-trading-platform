@@ -1,8 +1,8 @@
-import axios from "axios";
+import axios, { AxiosInstance } from "axios";
 
 import {BASE_URL, TIMEOUT } from './config';
 
-const instance = axios.create({
+const instance : AxiosInstance = axios.create({
     baseURL: BASE_URL,
     timeout: TIMEOUT
 })
