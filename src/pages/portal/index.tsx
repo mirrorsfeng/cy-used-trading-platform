@@ -1,50 +1,17 @@
-import { Input, Dropdown, Menu, Carousel  } from 'antd';
-
-import SIcon from '@/components/sIcon';
-import portalCategory from '@/constants/category';
+import {  Carousel  } from 'antd';
+import portalCategory from '@/constants/category.ts';
+import { Props } from '../type';
+import portalTab from '@/constants/portalTab';
 import TabShow from '@/components/tabShow';
 import styles from './index.less';
 
+export default function Portal(props:Props) {
 
-const { Search } = Input;
-
-const userMenu = (
-  <Menu>
-    <Menu.Item key="userCenter">
-      <p>个人中心</p>
-    </Menu.Item>
-    <Menu.Item key="grounding">
-      <p>发布上架</p>
-    </Menu.Item>
-  </Menu>
-)
-
-export default function Portal() {
-
-  const onSearch = () => {
-    console.log("search");
+  const tabClick = (e:any,tabName:string) => {
+    props.history.push(`/goods/${tabName}`)
   }
   return (
     <div className={styles.mainDiv}>
-      <div className={styles.header}>
-      <div className={styles.headerLeft}>
-        <SIcon stand = 'headerLeft'/>
-        <p>CY-TRADING</p>
-      </div>
-      <Search placeholder="搜索你想要的"
-              onSearch={onSearch} 
-              enterButton
-              className={styles.searchInput} 
-      />
-      <div className={styles.headerRight}>
-        <Dropdown overlay={userMenu} placement='bottomLeft'>
-          <div>
-        <SIcon stand = 'userIcon'/>
-        </div>
-        </Dropdown>
-        
-      </div>
-      </div>
       <div className={styles.bodyDiv}>
         <div className={styles.bodyContent}>
         <div className={styles.bannerBody}>
@@ -66,11 +33,11 @@ export default function Portal() {
           <p className={styles.categoryText}>分类</p>     
         <div className={styles.category}>
           {
-            portalCategory.map((item:string ,index: number) => {
+            portalCategory.map((item:string[] ,index: number) => {
               return (
-                <div key={index} className={styles.categoryIcon}>
-                  <img src={require(`@/assets/img/${item}.png`)} alt="" />
-                  <p>{item}</p>
+                <div key={index} className={styles.categoryIcon} onClick={(e) => tabClick(e,item[1])}>
+                  <img src={require(`@/assets/img/${item[0]}.png`)} alt="" />
+                  <p>{item[0]}</p>
                 </div>
               )
             })
@@ -79,7 +46,13 @@ export default function Portal() {
         </div>
         </div>
         <div className={styles.imgContent}>
-        <TabShow name="电子科技类" />
+       {
+         portalTab.map((item) => {
+           return (
+            <TabShow key={item} name={item} type={item as ('游戏' | '电子产品' | '生活用品' | '书籍' | '零食' | '其他')} />
+           )
+         })
+       }
         </div>
         </div>
       </div>

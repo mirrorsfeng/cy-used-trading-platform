@@ -1,30 +1,49 @@
 import React, { ReactElement, useRef, useState } from 'react';
 import { Input, Button, Modal, message } from 'antd';
-import { verifyEmail } from '@/service/userService';
+import { verifyEmail, register } from '@/service/userService';
 import "./index.less";
 
 type Props = {
     isModalVisible: boolean, 
     setIsModalVisible: Function,
+    location: {
+        pathname:string,
+    }
 }
 
-const Register : (props:Props) => ReactElement = ({ isModalVisible, setIsModalVisible } : Props) => {
+const Register : (props:Props) => ReactElement = ({ isModalVisible, setIsModalVisible, location } : Props) => {
    const [usernameValue, setUsernameValue] = useState('');
    const [passwordValue, setPasswordValue] = useState('');
    const [checkPasswordValue, setCheckPasswordValue] = useState('');
    const [email, setEmail] = useState('');
-   const [checkCode, setCheckCode] = useState('');
+   const [checkCode, setCheckCode] = useState<number>();
+   const [registerOk, setRegisterOk] = useState(true);
 
    const btnRef = useRef<HTMLInputElement>(null);
 
  const handleOk = () => {
-    setIsModalVisible(false);
+    if(!usernameValue || !passwordValue || !checkPasswordValue || !email || !checkCode){
+        message.error('请完善表单');
+    }else{
+        if(registerOk){
+            register(usernameValue, passwordValue, email, checkCode).then(res => {
+                setIsModalVisible(false);
+                message.success('注册成功');
+                console.log(res);
+            }).catch(err => {
+               message.error(err.response.data.message);
+            })
+       
+        }else {
+            message.error('表单有非法输入');
+        }
+    }
  }
 
  const handleCancel = () => {
     setIsModalVisible(false);
     setUsernameValue('');
-    setCheckCode('');
+    setCheckCode(0);
     setCheckPasswordValue('');
     setEmail('');
     setPasswordValue('');
@@ -44,22 +63,32 @@ const Register : (props:Props) => ReactElement = ({ isModalVisible, setIsModalVi
 
  const sendEmail = () => {
     let time = 60;
-    verifyEmail(email).then(res => {
-        console.log(res);
-    })
-    const timer = setInterval(() => timeBack(), 1000);
-    function timeBack() {
-        if(time !== 0) {
-        //    setTime(time-1);
-            --time;
-            btnRef.current!.disabled  = true;
-            btnRef.current!.innerHTML = `${time}`;
-        }else {
-            btnRef.current!.disabled  = false;
-            btnRef.current!.innerHTML = "发送";
-            clearInterval(timer);
-        }
-    } 
+    const emailReg = /^[a-zA-Z0-9_.-]+@[a-zA-Z0-9-]+(\.[a-zA-Z0-9-]+)*\.[a-zA-Z0-9]{2,6}$/;
+    if(emailReg.test(email)){
+        setRegisterOk(true);
+        verifyEmail(email).then(res => {
+            const timer = setInterval(() => timeBack(), 1000);
+    
+            function timeBack() {
+                if(time !== 0 && location.pathname === '/login') {
+                //    setTime(time-1);
+                    --time;
+                    btnRef.current!.disabled  = true;
+                    btnRef.current!.innerHTML = `${time}`;
+                }else {
+                    btnRef.current!.disabled  = false;
+                    btnRef.current!.innerHTML = "发送";
+                    clearInterval(timer);
+                }
+            } 
+        })
+    }else {
+        setRegisterOk(false);
+       message.error('请输入正确的邮箱格式');
+    }
+   
+   
+   
  }
 
     
@@ -84,8 +113,10 @@ const Register : (props:Props) => ReactElement = ({ isModalVisible, setIsModalVi
        if(value !== passwordValue) {
         _.target.parentNode.style.borderColor = "red";
         message.error('两次密码不一致');
+        setRegisterOk(false);
        }else {
         _.target.parentNode.style.borderColor = "#d9d9d9";
+        setRegisterOk(true);
        }
     }
 

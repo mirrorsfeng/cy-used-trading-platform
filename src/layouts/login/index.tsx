@@ -5,14 +5,16 @@ import { loginAuth } from '@/service/userService';
 import Register from './register';
 import { History } from '../type';
 import styles from './index.less';
-import './ant.less';
 
 
 interface Props  {
    history: History,
+   location: {
+     pathname: string,
+   }
 }
 
-export default function Login({ history } : Props) {
+export default function Login({ history, location } : Props) {
 
  const [isModalVisible, setIsModalVisible] = useState(false);
 
@@ -29,8 +31,8 @@ export default function Login({ history } : Props) {
         loginAuth(username, password).then((res:any) => {
        localStorage.setItem('token', res.data.result.token);
        history.push('/portal');
-    }).catch((err:any) => {
-         message.error("用户名或密码错误!")
+    }).catch((err:any) => {     
+         message.error(err.response.data.message);
     })
 
  }
@@ -66,7 +68,7 @@ export default function Login({ history } : Props) {
           </div>
           
         </div>;
-       <Register setIsModalVisible={setIsModalVisible} isModalVisible={isModalVisible}/>
+       <Register setIsModalVisible={setIsModalVisible} isModalVisible={isModalVisible} location={location}/>
  </>
   )
 };

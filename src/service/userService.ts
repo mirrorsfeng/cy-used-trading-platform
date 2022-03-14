@@ -12,14 +12,14 @@ export const loginAuth : (user_name:string, passWord: string ) => AxiosPromise =
     })
 }
 
-export const register : (user_name:string, passWord: string, emali: string, code: number) => AxiosPromise = (user_name:string, passWord: string, emali: string, code: number) => {
+export const register : (user_name:string, passWord: string, email: string, code: number) => AxiosPromise = (user_name:string, passWord: string, email: string, code: number) => {
     return instance({
         method: 'post',
         url: '/users/register',
         data: {
             user_name,
             passWord,
-            emali,
+            email,
             code
         }
     })
@@ -32,5 +32,11 @@ export const verifyEmail : (email: string) => AxiosPromise = (email:string) => {
         data: {
             email
         }
+    })
+}
+
+export const getUserInfo: () => AxiosPromise = () => {
+    return instance({
+        url: '/users/info'
     })
 }

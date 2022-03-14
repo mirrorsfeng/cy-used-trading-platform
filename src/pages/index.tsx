@@ -1,9 +1,10 @@
 import React, { memo, useEffect } from 'react';
+import { Props } from './type';
 
-export default memo(function index({history}) {
+export default memo(function Main(props:Props) {
 
   useEffect(() => {
-    history.push('/portal');
+    props.history.push('/portal');
   })
   
   return <div>222</div>;
