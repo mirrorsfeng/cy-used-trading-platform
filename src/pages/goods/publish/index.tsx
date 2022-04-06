@@ -118,7 +118,7 @@ const Publish = memo(() => {
       {
         portalCategory.map((item) => {
           return (
-            <Option value={item} key={item}>{item}</Option>
+            <Option value={item[0]} key={item[0]}>{item[0]}</Option>
           )
         })
       }

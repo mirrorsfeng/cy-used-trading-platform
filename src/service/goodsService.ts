@@ -33,3 +33,15 @@ export const uploadGoods: (goodsData : goodsType) => AxiosPromise = (goodsData:g
         data: goodsData
     })
 }
+
+export const getGoods : (id : number) => AxiosPromise = (id : number) => {
+    return instance({
+        url: `/goods/detail/${id}`
+    })
+}
+
+export const getBannerImg : () => AxiosPromise = () => {
+    return instance({
+        url: '/goods/banner/img',
+    })
+}

@@ -1,13 +1,14 @@
 .mainDiv {
     width: 180px;
     height: 230px;
-    margin: 5px 15px;
-    // background-color: red;
+    margin: 2px 20px;
+    // background-color: #fff;
 
     .image {
         width: 180px;
         border-radius: 20px;
         height: 150px;
+        cursor: pointer;
         // background-color: blue;
     }
     // .name {
@@ -19,8 +20,22 @@
     .comment {
         width: 180px;
         height: 40px;
-        text-overflow: ellipsis;
+        // overflow: hidden;
+        // text-overflow: ellipsis;
         margin-bottom: 8px;
+
+        // span {
+        //     height: 40px;
+        //     text-overflow: ellipsis;
+        //     overflow: hidden;
+        // }
+
+        .text{
+            height: 100%;
+            // text-overflow: ellipsis;
+            overflow: hidden;
+            // white-space: nowrap;
+        }
     }
 
     .footer {
@@ -29,5 +44,9 @@
         padding: 0 5px;
         justify-content: space-between;
         align-items: center;
+
+        .price {
+            color: red;
+        }
     }
 }

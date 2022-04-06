@@ -1,8 +1,10 @@
 import React, {  useEffect, useState } from 'react';
 import { Input, Button, Modal, Form,  message } from 'antd';
+import { useSetRecoilState } from 'recoil';
 import { UserOutlined } from '@ant-design/icons';
-import { loginAuth } from '@/service/userService';
+import { loginAuth, getUserInfo } from '@/service/userService';
 import Register from './register';
+import { userState } from '@/store/userAtom';
 import { History } from '../type';
 import styles from './index.less';
 
@@ -18,6 +20,8 @@ export default function Login({ history, location } : Props) {
 
  const [isModalVisible, setIsModalVisible] = useState(false);
 
+ const setUserState = useSetRecoilState(userState);
+
 
 
  const showModal = () => {
@@ -28,8 +32,15 @@ export default function Login({ history, location } : Props) {
 
  const onFinish = (values: any) => {
       const {username, password} = values;
+      if(localStorage.getItem('token')) {
+        localStorage.removeItem('token');
+      }
         loginAuth(username, password).then((res:any) => {
        localStorage.setItem('token', res.data.result.token);
+       getUserInfo().then(res => {
+         const user = { ...res.data.result }
+         setUserState(user);
+       })
        history.push('/portal');
     }).catch((err:any) => {     
          message.error(err.response.data.message);

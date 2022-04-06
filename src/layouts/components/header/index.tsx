@@ -19,6 +19,9 @@ const Header = ({history} : {history:History}) => {
       case 'grounding': 
         history.push('/goods/publish');
         break;
+      case 'userCenter':
+        history.push('/user');
+        break;
       default:
         break;
     }
@@ -41,9 +44,13 @@ const userMenu = (
     console.log("search");
   }
 
+  const onHeaderIcon = () => {
+      history.push('/portal');
+  }
+
   return (
     <div className={styles.header}>
-    <div className={styles.headerLeft}>
+    <div className={styles.headerLeft} onClick={onHeaderIcon} >
       <SIcon stand = 'headerLeft'/>
       <p>CY-TRADING</p>
     </div>

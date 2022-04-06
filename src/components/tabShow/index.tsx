@@ -1,7 +1,10 @@
 import React, { memo, useEffect, useState } from 'react';
 import { getTypeGoods } from '@/service/goodsService'; 
+import portalCategory from '@/constants/category';
 import SmallCard from './smallCard';
+import SIcon from '../sIcon';
 import styles from './index.less';
+import { useHistory } from 'umi';
 
 interface Props {
     name: string,
@@ -10,6 +13,7 @@ interface Props {
 
 const TabShow = memo((props: Props) => {
   const [cardData, setCardData] = useState<(any)[]>([]);
+  const history = useHistory();
 
   useEffect(() => {
     getTypeGoods(props.type, 5).then(res => {
@@ -22,14 +26,21 @@ const TabShow = memo((props: Props) => {
         data.push(res.data[i]);
       }
       setCardData(data);
-    }).catch(err => {
-        localStorage.removeItem('token');
-        alert('登录认证失效，请重新登录');
     })
   },[])
+
+  const goToType = () => {
+    const type = portalCategory.find(item => {
+      return item[0] === props.name
+    }) as string[] ;
+    history.push(`/goods/${type[1]}`);
+  }
   return (
     <div className={styles.mainDiv}>
-        <div className={styles.text}>{props.name}</div>
+        <div className={styles.text} onClick={goToType}>
+          <p>{props.name}</p>
+          <SIcon stand="more"/>
+        </div>
         <div className={styles.imgContent}>
           {
             cardData.map((item) => {
@@ -39,6 +50,9 @@ const TabShow = memo((props: Props) => {
                 comment={item.goods_comment} 
                 price={item.goods_price}
                 img={item.goods_img}
+                user_img={item.cy_User.avator}
+                id={item.id}
+                type={item.goods_type}
                 />
               )
             })

@@ -1,10 +1,14 @@
 import React, { memo, useEffect } from 'react';
-import { Button } from 'antd';
-import SIcon from '@/components/sIcon';
+import { Button, message, Modal } from 'antd';
+import { ExclamationCircleOutlined } from '@ant-design/icons';
+import { useRecoilValue } from 'recoil';
 
+import { userState } from '@/store/userAtom';
+import SIcon from '@/components/sIcon';
 import { uploadGoodsImg, uploadGoods } from '@/service/goodsService';
 import { getUserInfo } from '@/service/userService';
 import styles from './index.less';
+import { useHistory } from 'umi';
 
 
 type Props = {
@@ -14,13 +18,24 @@ type Props = {
   price: any, 
 }
 
+const { confirm } = Modal;
+
 const PubHeader = memo(( { comment, file, type, price} : Props ) => {
+  const history = useHistory();
+
+  const userStateAtom = useRecoilValue(userState);
 
   const onPublish = () => {
     const formData = new FormData();
     formData.append('file', file);
 
-    Promise.all([getUserInfo(), uploadGoodsImg(formData)]).then(res => {
+ confirm({
+    title: '确认发布宝贝?',
+    okText: '确认',
+    cancelText: '取消',
+    icon: <ExclamationCircleOutlined />,
+    onOk() {
+      Promise.all([getUserInfo(), uploadGoodsImg(formData)]).then(res => {
         const userId = res[0].data.result.id || 0;
         const goods_img = res[1].data.result.goods_img || '';
         if(userId && goods_img) {
@@ -32,12 +47,23 @@ const PubHeader = memo(( { comment, file, type, price} : Props ) => {
             goods_userId: userId,
           }
           uploadGoods(goods).then(res => {
-            console.log(res);
+           message.info('发表成功！');
+           history.push('/portal');
           })
         }
     }).catch(err => {
-      console.log(err);
+      message.error('发送失败');
     })
+    },
+    onCancel() {
+      console.log('Cancel');
+    },
+  });
+  
+  }
+
+  const onBack = () => {
+    history.push('/portal');
   }
   return (
     <div className={styles.header}>
@@ -47,6 +73,7 @@ const PubHeader = memo(( { comment, file, type, price} : Props ) => {
     </div>
     <div className={styles.headerRight}>
       <Button onClick={onPublish}>发布</Button>
+      <Button onClick={onBack}>返回</Button>
     </div>
     </div>
   )

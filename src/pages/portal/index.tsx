@@ -1,15 +1,48 @@
+import { useEffect, useState } from 'react';
+import { useRecoilState } from 'recoil';
+import { userState } from '@/store/userAtom';
 import {  Carousel  } from 'antd';
 import portalCategory from '@/constants/category.ts';
+import { getUserInfo } from '@/service/userService';
+import { getBannerImg } from '@/service/goodsService';
 import { Props } from '../type';
 import portalTab from '@/constants/portalTab';
 import TabShow from '@/components/tabShow';
 import styles from './index.less';
 
+type bannerType = {
+  img: string,
+  type: string,
+  id: number,
+}
+
 export default function Portal(props:Props) {
 
+  const [userStateAtom  ,setUserStateAtom] = useRecoilState(userState);
+  const [banner, setBanner] = useState<bannerType[]>([]);
   const tabClick = (e:any,tabName:string) => {
     props.history.push(`/goods/${tabName}`)
   }
+
+  const bannerClick = (e:any, id:number, type:string) => {
+    const bannerType = portalCategory.find((item:any) => {
+      return item[0] === type
+    })
+    props.history.push(`/goods/${bannerType[1]}/${id}`);
+  }
+
+  useEffect(() => {
+    if(!userStateAtom.hasOwnProperty('id')) {
+    getUserInfo().then(res => {
+      const user = { ...res.data.result }
+      setUserStateAtom(user);
+    })
+  }
+    getBannerImg().then(res => {
+      setBanner([...res.data]);
+    })
+  },[])
+ 
   return (
     <div className={styles.mainDiv}>
       <div className={styles.bodyDiv}>
@@ -18,15 +51,15 @@ export default function Portal(props:Props) {
           <div className={styles.banner}>
           <p>今日上新</p>
         <Carousel autoplay className={styles.carousel}>
-          <div>
-            <h3 style={{"height": '260px', "lineHeight": '260px', "background": '#364d79'}}>1</h3>
-          </div>
-          <div>
-            <h3 style={{"height": '260px', "lineHeight": '260px', "background": '#364d79'}}>2</h3>
-          </div>
-          <div>
-            <h3 style={{"height": '260px', "lineHeight": '260px', "background": '#364d79'}}>3</h3>
-          </div>
+          {
+            banner.map((item:bannerType,index:any) => {
+              return (
+                <div key={index}  className={styles.bannerImg} onClick={(e) => bannerClick(e,item.id, item.type)}>
+                  <img src={`http://localhost:8080${item.img}`} alt="" />
+                </div>
+              )
+            })
+          }
         </Carousel>
         </div>
         <div className={styles.categoryDiv}>
