@@ -5,12 +5,15 @@ import { Props } from '@/pages/type';
 import { UserOutlined } from '@ant-design/icons';
 import { getGoods } from '@/service/goodsService';
 import CommentList from './components/commentList';
+import SIcon from '@/components/sIcon';
+import ChatWindow from '@/components/chatWindow';
 import { uploadComment } from '@/service/comment';
 // import { useRecoilValue } from 'recoil';
 // import { userState } from '@/store/userAtom';
 
 import styles from './index.less'
-import SIcon from '@/components/sIcon';
+
+
 type goods = {
     goods_img: string,
     goods_price: number,
@@ -32,21 +35,13 @@ const GoodsDetail = memo(({location} : Props) => {
     const [commentValue, setCommentValue] = useState('');
     const [submitting, setSubmitting] = useState(false);
 
-    // const userStateAtom = useRecoilValue(userState);
     const [userName, setUserName] = useState('');
     const [avator, setAvator] = useState('');
     const [userId, setUserId] = useState<number>(0);
     const [goodsId, setGoodsId] = useState<number>(0);
+    const [chatIsShow, setChatIsShow] = useState<boolean>(false);
 
-    // const CommentList = ({ comments }) => (
-    //     <List
-    //       dataSource={comments}
-    //       header={`${comments.length} ${comments.length > 1 ? 'replies' : 'reply'}`}
-    //       itemLayout="horizontal"
-    //       renderItem={props => <Comment {...props} />}
-    //     />
-    //   );
-
+   
 
       const Editor = ({ onChange, onSubmit, submitting, value } : EditorType) => (
         <>
@@ -98,6 +93,10 @@ const GoodsDetail = memo(({location} : Props) => {
           console.log(err);
         })
       };
+
+      const openChat = () => {
+        setChatIsShow(true);
+      }
     useEffect(() => {
         setUserName(localStorage.getItem('user_name') as string);
         setAvator(localStorage.getItem('avator') as string);
@@ -131,8 +130,9 @@ const GoodsDetail = memo(({location} : Props) => {
              </div>
 
              <div className={styles.chat}>
-                <div className={styles.chatIcon}> <SIcon stand="chat"/> </div>
+                <div className={styles.chatIcon} onClick={openChat} > <SIcon stand="chat"/> </div>
                 <div className={styles.collect}> <SIcon stand='noCollect' /> </div>
+                <ChatWindow chatIsShow={chatIsShow} setChatIsShow={setChatIsShow} />
              </div>
          </div>
         </div>
