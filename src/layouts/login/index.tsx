@@ -32,15 +32,11 @@ export default function Login({ history, location } : Props) {
 
  const onFinish = (values: any) => {
       const {username, password} = values;
-      if(localStorage.getItem('token')) {
-        localStorage.removeItem('token');
-      }
         loginAuth(username, password).then((res:any) => {
        localStorage.setItem('token', res.data.result.token);
-       getUserInfo().then(res => {
-         const user = { ...res.data.result }
-         setUserState(user);
-       })
+       localStorage.setItem('id', res.data.result.id);
+      localStorage.setItem('user_name', res.data.result.user_name);
+      localStorage.setItem('avator', res.data.result.avator);
        history.push('/portal');
     }).catch((err:any) => {     
          message.error(err.response.data.message);

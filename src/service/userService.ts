@@ -40,3 +40,14 @@ export const getUserInfo: () => AxiosPromise = () => {
         url: '/users/info'
     })
 }
+
+export const changeUserAvator : (id: number ,file: any) => AxiosPromise = (id: number ,file: any) => {
+    return instance({
+        method: 'post',
+        url: '/users/avator',
+        data: file,
+        params: {
+            id,
+        }
+    })
+}

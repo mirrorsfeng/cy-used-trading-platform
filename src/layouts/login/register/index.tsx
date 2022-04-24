@@ -16,8 +16,10 @@ const Register : (props:Props) => ReactElement = ({ isModalVisible, setIsModalVi
    const [passwordValue, setPasswordValue] = useState('');
    const [checkPasswordValue, setCheckPasswordValue] = useState('');
    const [email, setEmail] = useState('');
-   const [checkCode, setCheckCode] = useState<number>();
+   const [checkCode, setCheckCode] = useState<any>();
    const [registerOk, setRegisterOk] = useState(true);
+
+   const [time, setTime] = useState<any>();
 
    const btnRef = useRef<HTMLInputElement>(null);
 
@@ -33,6 +35,11 @@ const Register : (props:Props) => ReactElement = ({ isModalVisible, setIsModalVi
             }).catch(err => {
                message.error(err.response.data.message);
             })
+            if(time) {
+                btnRef.current!.disabled  = false;
+                btnRef.current!.innerHTML = "发送";
+                clearInterval(time);
+            }
        
         }else {
             message.error('表单有非法输入');
@@ -43,10 +50,16 @@ const Register : (props:Props) => ReactElement = ({ isModalVisible, setIsModalVi
  const handleCancel = () => {
     setIsModalVisible(false);
     setUsernameValue('');
-    setCheckCode(0);
+    setCheckCode('');
     setCheckPasswordValue('');
     setEmail('');
     setPasswordValue('');
+    if(time) {
+        btnRef.current!.disabled  = false;
+        btnRef.current!.innerHTML = "发送";
+        clearInterval(time);
+    }
+
  }
     // const usernameOnBlur = (_:any) => {
     //     const value = _.target.value;
@@ -68,7 +81,7 @@ const Register : (props:Props) => ReactElement = ({ isModalVisible, setIsModalVi
         setRegisterOk(true);
         verifyEmail(email).then(res => {
             const timer = setInterval(() => timeBack(), 1000);
-    
+            setTime(timer);
             function timeBack() {
                 if(time !== 0 && location.pathname === '/login') {
                 //    setTime(time-1);

@@ -13,3 +13,9 @@ export const uploadComment : (content: string, user_id: number, goods_id: number
         }
     })
 }
+
+export const getComment : (id : number) => AxiosPromise = (id :number) => {
+    return instance({
+        url: `/comment/${id}`
+    })
+}

@@ -13,7 +13,7 @@ const Header = ({history} : {history:History}) => {
   const handleMenuClick = (e:any) => {
     switch(e.key) {
       case 'quit':
-        localStorage.removeItem('token');
+        localStorage.clear();
         location.reload();
         break;
       case 'grounding': 

@@ -1,6 +1,7 @@
 import React, { memo, useEffect, useState } from 'react';
 import moment from 'moment';
-import { Image, Comment, Avatar, Form, Button, List, Input } from 'antd';
+import 'moment/locale/zh-cn';
+import { Image, Comment, Avatar, message} from 'antd';
 import { Props } from '@/pages/type';
 import { UserOutlined } from '@ant-design/icons';
 import { getGoods } from '@/service/goodsService';
@@ -8,11 +9,14 @@ import CommentList from './components/commentList';
 import SIcon from '@/components/sIcon';
 import ChatWindow from '@/components/chatWindow';
 import { uploadComment } from '@/service/comment';
+import { deleteCollect, createCollect, getUserCollect  } from '@/service/collectService';
+import { getComment } from '@/service/commentService';
+
+import Editor from './components/editor';
 // import { useRecoilValue } from 'recoil';
 // import { userState } from '@/store/userAtom';
 
 import styles from './index.less'
-
 
 type goods = {
     goods_img: string,
@@ -28,7 +32,6 @@ type EditorType = {
    value: string,
 }
 
-const { TextArea } = Input;
 const GoodsDetail = memo(({location} : Props) => {
     const [goodsData, setGoodsData] = useState<goods>();
     const [comments, setComments] = useState<any[]>([]);
@@ -41,23 +44,9 @@ const GoodsDetail = memo(({location} : Props) => {
     const [goodsId, setGoodsId] = useState<number>(0);
     const [chatIsShow, setChatIsShow] = useState<boolean>(false);
 
-   
-
-      const Editor = ({ onChange, onSubmit, submitting, value } : EditorType) => (
-        <>
-          <Form.Item>
-            <TextArea rows={4} onChange={onChange} value={value} />
-          </Form.Item>
-          <Form.Item>
-            <Button htmlType="submit" loading={submitting} onClick={onSubmit} type="primary">
-              发表评论
-            </Button>
-          </Form.Item>
-        </>
-      );
+    const [isCollect, setIsColllect] = useState<boolean>(false);
 
       const commentValueOnchange = (e:any) => {
-        console.log(e.target.value);
         setCommentValue(e.target.value);
       }
 
@@ -67,40 +56,48 @@ const GoodsDetail = memo(({location} : Props) => {
         }
     
        setSubmitting(true);
-    
-        // setTimeout(() => {
-        //     setSubmitting(false);
-        //     setCommentValue('');
-        //     const com = {
-        //         author: 'Han Solo',
-        //         avatar: 'https://joeschmoe.io/api/v1/random',
-        //         content: <p>{commentValue}</p>,
-        //         datetime: moment().fromNow(),
-        //     }
-        //     setComments([...comments, com])
-        // }, 1000);
-        uploadComment(commentValue, userId, goodsId).then(res => {
+        uploadComment(commentValue, userId, goodsId).then((res:any) => {
           setSubmitting(false);
           setCommentValue('');
           const com = {
               author: userName,
-              avatar: avator,
+              avatar: avator=== 'null'?  <Avatar size={30} icon={<UserOutlined />} /> : <Avatar src={avator} alt={userName} />,
               content: <p>{commentValue}</p>,
               datetime: moment().fromNow(),
           }
           setComments([...comments, com])
-        }).catch(err => {
+        }).catch((err:any) => {
           console.log(err);
         })
       };
+
+      const onCollect = () => {
+        if(isCollect) {
+            deleteCollect(userId, goodsId).then(res => {
+              setIsColllect(false);
+              message.success('取消收藏成功！');
+            }).catch(err => {
+              message.error('取消收藏失败');
+            })
+           
+        }else {
+            createCollect(userId, goodsId).then(res => {
+              message.success('收藏成功！');
+              setIsColllect(true);
+            }).catch(err => {
+              message.error('收藏失败');
+            })
+        }
+      }
 
       const openChat = () => {
         setChatIsShow(true);
       }
     useEffect(() => {
-        setUserName(localStorage.getItem('user_name') as string);
+        const user_id = parseInt(localStorage.getItem('id') as string);
+        setUserName(localStorage.getItem('user_name') as string)
         setAvator(localStorage.getItem('avator') as string);
-        setUserId(parseInt(localStorage.getItem('id') as string))
+        setUserId(user_id);
         const path = location.pathname.split('/');
         const id = parseInt(path[3]);
         setGoodsId(id);
@@ -109,7 +106,31 @@ const GoodsDetail = memo(({location} : Props) => {
             setGoodsData(goods);
         }).catch(err => {
 
+        });
+
+        getComment(id).then(res => {
+          if(res.data.result.length !== 0) {
+          const commentData = (res.data.result || []).map((item :any) => {
+            return {
+              author: item.cy_User.user_name,
+              avatar: item.cy_User.avator?  <Avatar src={`http://localhost:8080/${item.cy_User.avator}`} alt={userName} /> : <Avatar size={30} icon={<UserOutlined />} />,
+              content: <p>{item.content}</p>,
+              datetime: moment(item.createdAt).fromNow(),
+            }
+          })
+          setComments(commentData);
+        }
+        });
+
+        getUserCollect(user_id).then(res => {
+          const stand = res.data.result.find((item : any) => {
+            return item === id
+          })
+         if(stand) {
+           setIsColllect(true);
+         }
         })
+        
     },[])
    
   return (
@@ -126,12 +147,12 @@ const GoodsDetail = memo(({location} : Props) => {
             <p>价格: ￥{goodsData?.goods_price}</p>
              <div className={styles.user}>
              <Avatar size={30} icon={<UserOutlined />} />
-            <div className={styles.name}>{userName}</div>
+            <div className={styles.name}>{goodsData?.cy_User.user_name}</div>
              </div>
 
              <div className={styles.chat}>
                 <div className={styles.chatIcon} onClick={openChat} > <SIcon stand="chat"/> </div>
-                <div className={styles.collect}> <SIcon stand='noCollect' /> </div>
+                <div className={styles.collect} onClick={onCollect}> { isCollect? <SIcon stand='isCollect' /> : <SIcon stand='noCollect' /> } </div>
                 <ChatWindow chatIsShow={chatIsShow} setChatIsShow={setChatIsShow} />
              </div>
          </div>
@@ -143,9 +164,10 @@ const GoodsDetail = memo(({location} : Props) => {
         </div>
 
         <div className={styles.words}>
+          <p className={styles.wordText}>评  论</p>
         {comments.length > 0 && <CommentList comments={comments} />}
         <Comment
-          avatar={ avator=== 'null'?  <Avatar size={30} icon={<UserOutlined />} /> : <Avatar src={avator} alt={userName} /> }
+          avatar={ avator=== 'null'?  <Avatar size={30} icon={<UserOutlined />} /> : <Avatar src={`http://localhost:8080/${avator}`} alt={userName} /> }
           content={
             <Editor
               onChange={commentValueOnchange}
