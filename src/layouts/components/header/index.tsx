@@ -1,6 +1,8 @@
-import React, { memo } from 'react';
-import { Input, Dropdown, Menu, Carousel  } from 'antd';
+import React, { memo, useEffect, useState } from 'react';
+import { Input, Dropdown, Menu, Carousel, Avatar  } from 'antd';
+
 import { History } from '../../type';
+
 import SIcon from '@/components/sIcon';
 import styles from './index.less';
 
@@ -10,6 +12,21 @@ const { Search } = Input;
 
 const Header = ({history} : {history:History}) => {
 
+
+  // const ws = new WebSocket(`ws:localhost:8080?${localStorage.getItem('user_name')}`);
+  // ws.onopen = () => {
+  //   console.log('connect!');
+  //   ws.send('你感觉如何/xiaoming')
+  // }
+ 
+  // ws.onmessage = (e) => {
+  //   console.log(e.data);
+  // }
+  // ws.onclose = () => {
+  //   console.log('closed');
+  // }
+  
+   
   const handleMenuClick = (e:any) => {
     switch(e.key) {
       case 'quit':
@@ -48,6 +65,9 @@ const userMenu = (
       history.push('/portal');
   }
 
+  useEffect(() => {
+
+  },[])
   return (
     <div className={styles.header}>
     <div className={styles.headerLeft} onClick={onHeaderIcon} >
@@ -62,7 +82,10 @@ const userMenu = (
     <div className={styles.headerRight}>
       <Dropdown overlay={userMenu} placement='bottomLeft'>
         <div>
-      <SIcon stand = 'userIcon'/>
+      {
+        localStorage.getItem('avator') === 'null'?  <SIcon stand = 'userIcon'/> : <Avatar size={34} src={`http://localhost:8080/${localStorage.getItem('avator')}`} />
+      }
+       
       </div>
       </Dropdown>
       

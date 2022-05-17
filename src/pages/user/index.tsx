@@ -5,6 +5,7 @@ import { UserOutlined,SettingFilled, StarFilled } from '@ant-design/icons';
 import { getUserAllGoods } from '@/service/collectService';
 import SmallCard from '@/components/tabShow/smallCard';
 import ImageOperate from '@/components/imageOperate';
+import Operate from './component/operate';
 import { changeUserAvator } from '@/service/userService';
 
 import styles from './index.less';
@@ -23,6 +24,7 @@ const User = memo(() => {
     const [goodsData, setGoodsData] = useState<GoodsDataType>();
     const [isVisible, setIsVisible] = useState<boolean>(false);
     const [userAvator, setUserAvator] = useState<string>('');
+    const [tabStand, setTabStand] = useState<number>(1);
 
 
     const uploadAvator = (file : any) => {
@@ -63,6 +65,10 @@ const User = memo(() => {
       setIsVisible(true);
     }
 
+    const changeTab = (num:any) => {
+     setTabStand(num);
+    }
+
   
   return (
     <div className={styles.mainDiv}>
@@ -82,11 +88,12 @@ const User = memo(() => {
             </div>
         </div>
         <div className={styles.iconHeader}>
-        <div className={styles.iconCss}> <StarFilled style={{color: '#f3a034', fontSize: '20px'}} /> <p>收藏 {starNum} </p>  </div>
-        <div className={styles.iconCss}><SettingFilled style={{color: '#23c9ed', fontSize: '20px'}}/>  <p>设置</p> </div>
+        <div className={styles.iconCss} onClick={() => changeTab(1)}> <StarFilled style={{color: '#f3a034', fontSize: '20px'}} /> <p>收藏 {starNum} </p>  </div>
+        <div className={styles.iconCss} onClick={() => changeTab(2)}><SettingFilled style={{color: '#23c9ed', fontSize: '20px'}}/>  <p>设置</p> </div>
         </div>
         <div className={styles.content}>
         {
+          tabStand === 1?
           goodsData?.map((item:any) => {
             return ( 
               <div key={item.id} className={styles.goodsItem}>
@@ -100,7 +107,7 @@ const User = memo(() => {
                     />
               </div>
             )
-          })
+          }) : <Operate />
         }
         </div>
     </div>

@@ -3,14 +3,12 @@ import moment from 'moment';
 import 'moment/locale/zh-cn';
 import { Image, Comment, Avatar, message} from 'antd';
 import { Props } from '@/pages/type';
-import { UserOutlined } from '@ant-design/icons';
+import { UserOutlined, StarOutlined, StarFilled, AliwangwangFilled } from '@ant-design/icons';
 import { getGoods } from '@/service/goodsService';
 import CommentList from './components/commentList';
-import SIcon from '@/components/sIcon';
 import ChatWindow from '@/components/chatWindow';
-import { uploadComment } from '@/service/comment';
 import { deleteCollect, createCollect, getUserCollect  } from '@/service/collectService';
-import { getComment } from '@/service/commentService';
+import { getComment, uploadComment } from '@/service/commentService';
 
 import Editor from './components/editor';
 // import { useRecoilValue } from 'recoil';
@@ -146,14 +144,19 @@ const GoodsDetail = memo(({location} : Props) => {
          <div className={styles.price}>
             <p>价格: ￥{goodsData?.goods_price}</p>
              <div className={styles.user}>
-             <Avatar size={30} icon={<UserOutlined />} />
+               <div>
+                 {
+                   goodsData?.cy_User.avator? <Avatar size={30} src={`http://localhost:8080/${goodsData?.cy_User.avator}`} /> : <Avatar size={30} icon={<UserOutlined />} />
+                 }
+               </div>
+             
             <div className={styles.name}>{goodsData?.cy_User.user_name}</div>
              </div>
 
              <div className={styles.chat}>
-                <div className={styles.chatIcon} onClick={openChat} > <SIcon stand="chat"/> </div>
-                <div className={styles.collect} onClick={onCollect}> { isCollect? <SIcon stand='isCollect' /> : <SIcon stand='noCollect' /> } </div>
-                <ChatWindow chatIsShow={chatIsShow} setChatIsShow={setChatIsShow} />
+                <div className={styles.chatIcon} onClick={openChat} > <AliwangwangFilled style={{fontSize: '25px', color: '#3498db'}} /> </div>
+                <div className={styles.collect} onClick={onCollect}> { isCollect? <StarFilled style={{color: '#3498db', fontSize: '25px'}}/> : <StarOutlined style={{fontSize: '25px'}} />  } </div>
+                <ChatWindow chatIsShow={chatIsShow} setChatIsShow={setChatIsShow} chatName={goodsData?.cy_User.user_name} otherAvator = { goodsData?.cy_User.avator} />
              </div>
          </div>
         </div>

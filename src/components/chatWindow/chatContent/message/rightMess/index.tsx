@@ -15,7 +15,7 @@ const RightMess = memo(({avator, content}: Props) => {
         </div>
         <div className={styles.avator}>
             {
-                avator?  <Avatar size={35} src="https://joeschmoe.io/api/v1/random" /> :
+                avator!=='null' && avator?  <Avatar size={35} src={`http://localhost:8080/${avator}`} /> :
                             <Avatar size={35} icon={<UserOutlined />} />
             }
         </div>

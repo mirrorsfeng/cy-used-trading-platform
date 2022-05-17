@@ -85,7 +85,9 @@ const Publish = memo(() => {
       const reg = /^-?\d*(\.\d*)?$/;
       if ((!isNaN(value) && reg.test(value)) || value === '' || value === '-') {
           const numValue = parseFloat(value);
+          if(!isNaN(numValue)){
           setPrice(numValue);
+          }
       }
     }
 
