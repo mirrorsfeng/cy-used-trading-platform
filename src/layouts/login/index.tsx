@@ -33,6 +33,7 @@ export default function Login({ history, location } : Props) {
  const onFinish = (values: any) => {
       const {username, password} = values;
         loginAuth(username, password).then((res:any) => {
+          console.log(res);
        localStorage.setItem('token', res.data.result.token);
        localStorage.setItem('id', res.data.result.id);
       localStorage.setItem('user_name', res.data.result.user_name);

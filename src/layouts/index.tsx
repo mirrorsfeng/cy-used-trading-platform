@@ -4,6 +4,7 @@ import Login from './login';
 import Header from './components/header';
 import { getUserInfo } from '@/service/userService';
 import { History } from './type';
+import ChatIcon from '@/components/chatIcon';
 function Layouts(props:{location:any, history:History, children:any}) {
     const token = localStorage.getItem('token');
 
@@ -32,6 +33,7 @@ function Layouts(props:{location:any, history:History, children:any}) {
             <RecoilRoot>
             <Header history={props.history} />
            { props.children }
+           <ChatIcon />
            </RecoilRoot>
             </>
             )

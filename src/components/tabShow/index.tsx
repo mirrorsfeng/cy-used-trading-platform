@@ -2,6 +2,7 @@ import React, { memo, useEffect, useState } from 'react';
 import { getTypeGoods } from '@/service/goodsService'; 
 import portalCategory from '@/constants/category';
 import SmallCard from './smallCard';
+import { Empty } from 'antd';
 import SIcon from '../sIcon';
 import styles from './index.less';
 import { useHistory } from 'umi';
@@ -41,8 +42,9 @@ const TabShow = memo((props: Props) => {
           <p>{props.name}</p>
           <SIcon stand="more"/>
         </div>
-        <div className={styles.imgContent}>
+        <div className={styles.imgContent} style={cardData.length === 0? {"justifyContent":'center'}: {}}>
           {
+            cardData.length!==0?
             cardData.map((item) => {
               return (
                 <SmallCard 
@@ -55,7 +57,7 @@ const TabShow = memo((props: Props) => {
                 type={item.goods_type}
                 />
               )
-            })
+            }) : <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="暂无内容"/>
           }  
         </div>
     </div>
