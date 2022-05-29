@@ -1,10 +1,10 @@
 import React, { memo, useEffect, useState } from 'react';
 import moment from 'moment';
 import 'moment/locale/zh-cn';
-import { Image, Comment, Avatar, message} from 'antd';
+import { Image, Comment, Avatar, message, Button, Modal} from 'antd';
 import { Props } from '@/pages/type';
-import { UserOutlined, StarOutlined, StarFilled, AliwangwangFilled } from '@ant-design/icons';
-import { getGoods } from '@/service/goodsService';
+import { UserOutlined, StarOutlined, StarFilled, AliwangwangFilled, ExclamationCircleOutlined } from '@ant-design/icons';
+import { getGoods, deleteGoods } from '@/service/goodsService';
 import CommentList from './components/commentList';
 import ChatWindow from '@/components/chatWindow';
 import { deleteCollect, createCollect, getUserCollect  } from '@/service/collectService';
@@ -15,6 +15,8 @@ import Editor from './components/editor';
 // import { userState } from '@/store/userAtom';
 
 import styles from './index.less'
+
+const { confirm } = Modal;
 
 type goods = {
     goods_img: string,
@@ -30,7 +32,7 @@ type EditorType = {
    value: string,
 }
 
-const GoodsDetail = memo(({location} : Props) => {
+const GoodsDetail = memo(({location, history} : Props) => {
     const [goodsData, setGoodsData] = useState<goods>();
     const [comments, setComments] = useState<any[]>([]);
     const [commentValue, setCommentValue] = useState('');
@@ -91,6 +93,26 @@ const GoodsDetail = memo(({location} : Props) => {
       const openChat = () => {
         setChatIsShow(true);
       }
+
+      const deleteGood = () => {
+        confirm({
+          title: '确定下架该商品？',
+          icon: <ExclamationCircleOutlined />,
+          okText: '是',
+          cancelText: '否',
+          onOk() {
+            if(goodsData && goodsData.id){
+              deleteGoods(goodsData.id).then(res => {
+                console.log(res);
+                history.push('/portal');
+              })
+            }
+          },
+          onCancel() {
+            console.log('Cancel');
+          },
+        });
+      }
     useEffect(() => {
         const user_id = parseInt(localStorage.getItem('id') as string);
         setUserName(localStorage.getItem('user_name') as string)
@@ -134,6 +156,10 @@ const GoodsDetail = memo(({location} : Props) => {
   return (
     <div className={styles.mainDiv}>
         <div className={styles.content}>
+          {
+            userName === goodsData?.cy_User.user_name?
+            <Button onClick={deleteGood}  className={styles.btn} type="primary">下架</Button> : <></>
+          }
         <div className={styles.top}>
         <Image
         width={300}

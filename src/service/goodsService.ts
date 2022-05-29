@@ -45,3 +45,31 @@ export const getBannerImg : () => AxiosPromise = () => {
         url: '/goods/banner/img',
     })
 }
+
+export const searchLike: (keywords: string) => AxiosPromise = (keywords: string) => {
+    return instance({
+        url: '/goods/selectAll/like',
+        params: {
+            keywords
+        }
+    })
+} 
+
+export const deleteGoods: (id:number) => AxiosPromise = (id: number) => {
+    return instance({
+        url: '/goods/delete',
+        method: 'post',
+        data: {
+            id
+        }
+    })
+}
+
+export const getMyGoods: (userId: number) => AxiosPromise = (userId: number) => {
+    return instance({
+        url: '/goods/my/goods',
+        params: {
+            userId
+        }
+    })
+}

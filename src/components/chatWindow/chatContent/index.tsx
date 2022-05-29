@@ -1,44 +1,41 @@
-import React, {
-  memo,
-  useCallback,
-  useEffect,
-  useLayoutEffect,
-  useRef,
-  useState,
-} from 'react';
+import React,{ Component} from 'react';
 import { Button, Input } from 'antd';
 import Message from './message';
-import { getChatList } from '@/service/chatService';
+import { changeRead, getChatList } from '@/service/chatService';
+import { connect } from 'umi';
 import styles from './index.less';
 
 const { TextArea } = Input;
-class ChatContent extends React.Component<any, any> {
-  constructor(props: { chatName: string; otherAvator: string }) {
+class ChatContent extends Component<any, any> {
+  constructor(props: { chatName: string; otherAvator: string; ws: WebSocket }) {
     super(props);
-    const ws = new WebSocket(
-      `ws:localhost:8080?${localStorage.getItem('user_name')}`,
-    );
-    ws.onopen = () => {
-      console.log('连接成功');
-    };
-    ws.onmessage = (e) => {
-      const obj = {
-        avator: this.props.otherAvator,
-        content: e.data,
-        user: 'other',
-      };
-      const newArr = [...this.state.messageArr, obj];
-      this.setState({
-        messageArr: newArr,
-      });
-    };
-
+    // const ws = new WebSocket(
+    //   `ws:localhost:8080?${localStorage.getItem('user_name')}`,
+    // );
+    // props.ws.onopen = () => {
+    //   console.log('连接成功');
+    // };
+    // props.ws.onmessage = (e) => {
+    //   const dataList = e.data.split('-');
+    //   const obj = {
+    //     avator: this.props.otherAvator,
+    //     content: dataList[0],
+    //     user: 'other',
+    //   };
+    //   const newArr = [...this.state.messageArr, obj];
+    //   this.setState({
+    //     messageArr: newArr,
+    //   });
+    // };
+    
+    
     this.state = {
       inputValue: '',
       messageArr: [],
-      ws: ws,
+      ws: props.ws,
       messageRef: React.createRef(),
       myAvator: localStorage.getItem('avator'),
+      chatList: []
     };
    
   }
@@ -46,7 +43,13 @@ class ChatContent extends React.Component<any, any> {
   componentDidMount() {
     const myName = localStorage.getItem('user_name') as string;
     getChatList(myName, this.props.chatName).then((res) => {
+      
       const newData = res.data.result.map((item: any) => {
+        if(!item.isread) {
+          changeRead(item.id).then(res => {
+           
+          })
+        }
         if (item.user_name === myName) {
           item.user = 'me';
           item.avator = localStorage.getItem('avator') as string;
@@ -62,6 +65,29 @@ class ChatContent extends React.Component<any, any> {
     });
   }
 
+
+  static getDerivedStateFromProps(props:any, state:any) {
+    const { chatList, chatName, otherAvator } = props;
+    for(let i=0;i<chatList.length;i++) {
+      if(chatList[i].name === chatName) {
+        if(state.chatList.length === 0 || (state.chatList.length != 0 && chatList[i].content !== state.chatList[0])){
+          changeRead(chatList[i].id).then(res => {
+           
+          })
+        return {
+          ...state,
+          messageArr:[...state.messageArr, {
+            user:chatName,
+            avator: otherAvator,
+            content: chatList[i].content
+          }],
+          chatList: [chatList[i].content],
+        }
+      }
+      }
+    }
+    return null
+  }
   componentDidUpdate() {
    this.state.messageRef.current.scrollTop = this.state.messageRef.current.scrollHeight;
   }
@@ -213,4 +239,4 @@ class ChatContent extends React.Component<any, any> {
 //   },
 // );
 
-export default ChatContent;
+export default connect((state:any) => ({ws:state.store.ws, chatList: state.store.chatList}))(ChatContent);

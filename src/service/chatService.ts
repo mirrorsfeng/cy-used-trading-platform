@@ -11,3 +11,22 @@ export const getChatList: (user_name: string, toUser_name:string) => AxiosPromis
         }
     })
 }
+
+export const getNotRead: (name: string) => AxiosPromise = (name: string) => {
+    return instance({
+        url: '/chat/noread',
+        params: {
+            name
+        }
+    })
+}
+
+export const changeRead: (id: number) => AxiosPromise = (id:number) => {
+    return instance({
+        url: '/chat',
+        method: 'put',
+        data: {
+            id
+        }
+    })
+}

@@ -1,6 +1,6 @@
 import React, { memo, useEffect, useState } from 'react';
-import { Avatar, Divider, message, Modal, Popconfirm  } from 'antd';
-import { UserOutlined,SettingFilled, StarFilled } from '@ant-design/icons';
+import { Avatar, Divider, message, Modal, Popconfirm, Empty  } from 'antd';
+import { UserOutlined,SettingFilled, StarFilled, DatabaseFilled } from '@ant-design/icons';
 
 import { getUserAllGoods } from '@/service/collectService';
 import SmallCard from '@/components/tabShow/smallCard';
@@ -9,6 +9,7 @@ import Operate from './component/operate';
 import { changeUserAvator } from '@/service/userService';
 
 import styles from './index.less';
+import SelfUp from './component/selfUp';
 
 type GoodsDataItem = {
     goods_comment: string,
@@ -34,6 +35,7 @@ const User = memo(() => {
         localStorage.setItem('avator', res.data.result.avator);
         setUserAvator(res.data.result.avator);
         message.success('更换成功！');
+        setIsVisible(false);
       }).catch(err => {
         console.log(err);
       })
@@ -88,13 +90,14 @@ const User = memo(() => {
             </div>
         </div>
         <div className={styles.iconHeader}>
-        <div className={styles.iconCss} onClick={() => changeTab(1)}> <StarFilled style={{color: '#f3a034', fontSize: '20px'}} /> <p>收藏 {starNum} </p>  </div>
-        <div className={styles.iconCss} onClick={() => changeTab(2)}><SettingFilled style={{color: '#23c9ed', fontSize: '20px'}}/>  <p>设置</p> </div>
+        <div className={`${styles.iconCss} ${tabStand === 1? styles.stand: ''}`} onClick={() => changeTab(1)}> <StarFilled style={{color: '#f3a034', fontSize: '20px'}} /> <p>收藏 {starNum} </p>  </div>
+        <div className={`${styles.iconCss} ${tabStand === 2? styles.stand: ''}`} onClick={() => changeTab(2)}><SettingFilled style={{color: '#23c9ed', fontSize: '20px'}}/>  <p>设置</p> </div>
+        <div className={`${styles.iconCss} ${tabStand === 3? styles.stand: ''}`} onClick={() => changeTab(3)}> <DatabaseFilled  style={{color: '#27ae60', fontSize: '20px'}}/>  <p>已发布</p> </div>
         </div>
         <div className={styles.content}>
         {
           tabStand === 1?
-          goodsData?.map((item:any) => {
+         goodsData?.length==0?  <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="还未收藏任何商品"/> :goodsData?.map((item:any) => {
             return ( 
               <div key={item.id} className={styles.goodsItem}>
                 <SmallCard 
@@ -103,11 +106,11 @@ const User = memo(() => {
                     price={item.goods_price}
                     id={item.id}
                     type={item.goods_type}
-                    user_img={''}
+                    user_img={item.cy_User.avator}
                     />
               </div>
             )
-          }) : <Operate />
+          }) : tabStand === 2? <Operate /> : <SelfUp />
         }
         </div>
     </div>

@@ -57,8 +57,8 @@ const userMenu = (
     </Menu.Item>
   </Menu>
 )
-  const onSearch = () => {
-    console.log("search");
+  const onSearch = (e:any) => {
+    history.push(`/search?keyword=${e}`)
   }
 
   const onHeaderIcon = () => {

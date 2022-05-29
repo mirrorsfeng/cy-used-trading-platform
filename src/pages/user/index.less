@@ -5,6 +5,22 @@
     position: absolute;
     min-width: 1300px;
 
+    :global {
+        .ant-empty {
+            margin: 0 auto;
+        }
+    }
+
+
+    .stand::after {
+        content: '';
+        width: 60px;
+        height: 30px;
+        position: absolute;
+        
+        border-bottom: 3px solid #3498db;
+    }
+
     .userAva {
         width: 70%;
         min-width: 600px;

@@ -8,18 +8,21 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    animation: toshadow 2s 1;
+    
     &:hover {
-        // @keyframes toshadow {
-        //     0% {
-            
-        //     }
-        //     100% {
-        //         box-shadow: 2px 2px 5px #888888;
-        //         border: 1px solid #f1c40f;
-        //         background-color: #fff;
-        //     }
-        // }
+        animation-name: toshow;
+        animation-duration: .5s;
+        animation-iteration-count: 1;
+        animation-fill-mode: forwards;
+        
+    }
+
+    @keyframes toshow {
+        100% {
+            box-shadow: 2px 2px 5px #888888;
+        border: 1px solid #f1c40f;
+        background-color: #fff;
+        }
     }
     // background-color: #fff;
 

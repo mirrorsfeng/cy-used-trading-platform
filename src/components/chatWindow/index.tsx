@@ -14,6 +14,7 @@ const ChatWindow = memo((props: Props) => {
         props.setChatIsShow(false);
     }
 
+    
   return (  
     <Modal  title={props.chatName}
             visible={props.chatIsShow} 
@@ -22,9 +23,12 @@ const ChatWindow = memo((props: Props) => {
             bodyStyle={{padding: '0px'}}
             maskClosable={false}
     >
-        <ChatContent chatName={props.chatName} otherAvator={props.otherAvator} />
+      {
+        props.chatIsShow?  <ChatContent chatName={props.chatName} otherAvator={props.otherAvator} /> : <></>
+      }
+       
     </Modal> 
   )
 })
 
-export default ChatWindow
+export default ChatWindow;
